@@ -183,7 +183,7 @@ for dbName in ${DB_NAMES}; do
     start=$(date +%s)
 
     # Upload backup file
-    s3cmd put /tmp/${dbName}.sql.gz ${S3_BUCKET}
+    aws s3 cp "/tmp/${dbName}.sql.gz" "s3://${S3_BUCKET}/${dbName}.sql.gz"
     STATUS=$?
     if [ $STATUS -ne 0 ]; then
         error_message="S3 copy failed for database ${dbName} backup"
@@ -193,7 +193,7 @@ for dbName in ${DB_NAMES}; do
     fi
 
     # Upload checksum file
-    s3cmd put /tmp/${dbName}.sql.sha256.gz ${S3_BUCKET}
+    aws s3 cp "/tmp/${dbName}.sql.sha256.gz" "s3://${S3_BUCKET}/${dbName}.sql.sha256.gz"
     STATUS=$?
     end=$(date +%s)
     if [ $STATUS -ne 0 ]; then
@@ -208,12 +208,10 @@ for dbName in ${DB_NAMES}; do
     # Backblaze B2 Upload (Optional)
     if [ "${B2_BUCKET}" != "" ]; then
         start=$(date +%s)
-        s3cmd \
-        --access_key=${B2_APPLICATION_KEY_ID} \
-        --secret_key=${B2_APPLICATION_KEY} \
-        --host=${B2_HOST} \
-        --host-bucket='%(bucket)s.'"${B2_HOST}" \
-        put /tmp/${dbName}.sql.gz s3://${B2_BUCKET}/${dbName}.sql.gz
+        AWS_ACCESS_KEY_ID="${B2_APPLICATION_KEY_ID}" \
+        AWS_SECRET_ACCESS_KEY="${B2_APPLICATION_KEY}" \
+        aws s3 cp "/tmp/${dbName}.sql.gz" "s3://${B2_BUCKET}/${dbName}.sql.gz" \
+          --endpoint-url = "https://${B2_HOST}"
         STATUS=$?
         end=$(date +%s)
         if [ $STATUS -ne 0 ]; then

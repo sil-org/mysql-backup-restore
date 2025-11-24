@@ -73,7 +73,7 @@ for dbName in ${DB_NAMES}; do
 
     # Download backup file
     start=$(date +%s)
-    s3cmd get -f ${S3_BUCKET}/${dbName}.sql.gz /tmp/${dbName}.sql.gz
+    aws s3 cp "s3://${S3_BUCKET}/${dbName}.sql.gz" "/tmp/${dbName}.sql.gz"
     STATUS=$?
     end=$(date +%s)
 
@@ -88,7 +88,7 @@ for dbName in ${DB_NAMES}; do
 
     # Download checksum file
     start=$(date +%s)
-    s3cmd get -f ${S3_BUCKET}/${dbName}.sql.sha256.gz /tmp/${dbName}.sql.sha256.gz
+    aws s3 cp "s3://${S3_BUCKET}/${dbName}.sql.sha256.gz" "/tmp/${dbName}.sql.sha256.gz"
     STATUS=$?
     end=$(date +%s)
 
