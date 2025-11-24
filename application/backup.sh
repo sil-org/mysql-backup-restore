@@ -44,7 +44,7 @@ function get_server_cert() {
 # Function to remove sensitive values from sentry Event
 filter_sensitive_values() {
     local msg="$1"
-    for var in AWS_ACCESS_KEY AWS_SECRET_KEY B2_APPLICATION_KEY B2_APPLICATION_KEY_ID MYSQL_PASSWORD; do
+    for var in AWS_ACCESS_KEY AWS_SECRET_KEY AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY B2_APPLICATION_KEY B2_APPLICATION_KEY_ID MYSQL_PASSWORD; do
         val="${!var}"
         if [ -n "$val" ]; then
             msg="${msg//$val/[FILTERED]}"
@@ -90,6 +90,10 @@ error_to_sentry() {
 STATUS=0
 
 log "INFO" "mysql-backup-restore: backup: Started"
+
+# maintain backward compatibility with key variables accepted by s3cmd
+export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID:-$AWS_ACCESS_KEY}"
+export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY:-$AWS_SECRET_KEY}"
 
 # Determine which database dump command to use
 DATABASE_DUMP_COMMAND="";
@@ -183,7 +187,7 @@ for dbName in ${DB_NAMES}; do
     start=$(date +%s)
 
     # Upload backup file
-    s3cmd put /tmp/${dbName}.sql.gz ${S3_BUCKET}
+    aws s3 cp --quiet "/tmp/${dbName}.sql.gz" "${S3_BUCKET}/${dbName}.sql.gz"
     STATUS=$?
     if [ $STATUS -ne 0 ]; then
         error_message="S3 copy failed for database ${dbName} backup"
@@ -193,7 +197,7 @@ for dbName in ${DB_NAMES}; do
     fi
 
     # Upload checksum file
-    s3cmd put /tmp/${dbName}.sql.sha256.gz ${S3_BUCKET}
+    aws s3 cp --quiet "/tmp/${dbName}.sql.sha256.gz" "${S3_BUCKET}/${dbName}.sql.sha256.gz"
     STATUS=$?
     end=$(date +%s)
     if [ $STATUS -ne 0 ]; then
@@ -208,12 +212,10 @@ for dbName in ${DB_NAMES}; do
     # Backblaze B2 Upload (Optional)
     if [ "${B2_BUCKET}" != "" ]; then
         start=$(date +%s)
-        s3cmd \
-        --access_key=${B2_APPLICATION_KEY_ID} \
-        --secret_key=${B2_APPLICATION_KEY} \
-        --host=${B2_HOST} \
-        --host-bucket='%(bucket)s.'"${B2_HOST}" \
-        put /tmp/${dbName}.sql.gz s3://${B2_BUCKET}/${dbName}.sql.gz
+        AWS_ACCESS_KEY_ID="${B2_APPLICATION_KEY_ID}" \
+        AWS_SECRET_ACCESS_KEY="${B2_APPLICATION_KEY}" \
+        aws s3 cp --quiet "/tmp/${dbName}.sql.gz" "${B2_BUCKET}/${dbName}.sql.gz" \
+          --endpoint-url = "https://${B2_HOST}"
         STATUS=$?
         end=$(date +%s)
         if [ $STATUS -ne 0 ]; then
