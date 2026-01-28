@@ -41,8 +41,8 @@ Service to backup and/or restore mysql databases to/from S3 and optionally to B2
 
 `B2_HOST`  (optional; required if `B2_BUCKET` is defined) Backblaze B2 bucket's `Endpoint`
 
-## Docker Hub
-This image is built automatically on Docker Hub as [silintl/mysql-backup-restore](https://hub.docker.com/r/silintl/mysql-backup-restore/).
+## Docker
+This image is built automatically to GitHub Packages (GHCR)
 
 ## Playing with it locally
 You'll need [Docker Engine](https://docs.docker.com/engine/) with the Docker Compose plugin and [Make](https://www.gnu.org/software/make/).
