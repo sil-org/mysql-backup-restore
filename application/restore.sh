@@ -63,12 +63,11 @@ error_to_sentry() {
 }
 
 STATUS=0
+S3_BUCKET=$(echo "$S3_BUCKET" | sed 's/\/$//')
 
 log "INFO" "mysql-backup-restore: restore: Started"
 
 get_server_cert
-
-S3_BUCKET=$(echo "$S3_BUCKET" | sed 's/\/$//')
 
 for dbName in ${DB_NAMES}; do
     log "INFO" "mysql-backup-restore: Restoring ${dbName}"
