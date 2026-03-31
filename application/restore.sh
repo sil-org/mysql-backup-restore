@@ -63,6 +63,7 @@ error_to_sentry() {
 }
 
 STATUS=0
+S3_BUCKET=$(echo "$S3_BUCKET" | sed 's/\/$//')
 
 log "INFO" "mysql-backup-restore: restore: Started"
 
