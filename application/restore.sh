@@ -65,7 +65,7 @@ error_to_sentry() {
 STATUS=0
 S3_BUCKET=$(echo "$S3_BUCKET" | sed 's/\/$//')
 
-log "INFO" "mysql-backup-restore: restore: Started"
+log "INFO" "mysql-backup-restore ${GITHUB_REF_NAME:-?} (${GITHUB_SHA:-?}): restore: Started"
 
 # maintain backward compatibility with key variables accepted by s3cmd
 export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID:-$AWS_ACCESS_KEY}"
