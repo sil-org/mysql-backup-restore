@@ -27,9 +27,13 @@ Service to backup and/or restore mysql databases to/from S3 and optionally to B2
 
 >**It's recommended that your S3 bucket have versioning turned on.** Each backup creates a file of the form _dbname_.sql.gz. If versioning is not turned on, the previous backup file will be replaced with the new one, resulting in a single level of backups.
 
-`AWS_ACCESS_KEY` used for S3 interactions
+`AWS_ACCESS_KEY_ID` used for S3 interactions
 
-`AWS_SECRET_KEY` used for S3 interactions
+`AWS_SECRET_ACCESS_KEY` used for S3 interactions
+
+`AWS_ACCESS_KEY` used for S3 interactions (Deprecated)
+
+`AWS_SECRET_KEY` used for S3 interactions (Deprecated)
 
 `B2_BUCKET` (optional) Name of the Backblaze B2 bucket, e.g., _database-backups_. When `B2_BUCKET` is defined, the backup file is copied to the B2 bucket in addition to the S3 bucket.
 

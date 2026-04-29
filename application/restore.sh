@@ -19,7 +19,7 @@ function get_server_cert() {
 # Function to remove sensitive values from sentry Event
 filter_sensitive_values() {
     local msg="$1"
-    for var in AWS_ACCESS_KEY AWS_SECRET_KEY B2_APPLICATION_KEY B2_APPLICATION_KEY_ID MYSQL_PASSWORD; do
+    for var in AWS_ACCESS_KEY AWS_SECRET_KEY AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY B2_APPLICATION_KEY B2_APPLICATION_KEY_ID MYSQL_PASSWORD; do
         val="${!var}"
         if [ -n "$val" ]; then
             msg="${msg//$val/[FILTERED]}"
@@ -67,6 +67,10 @@ S3_BUCKET=$(echo "$S3_BUCKET" | sed 's/\/$//')
 
 log "INFO" "mysql-backup-restore: restore: Started"
 
+# maintain backward compatibility with key variables accepted by s3cmd
+export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID:-$AWS_ACCESS_KEY}"
+export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY:-$AWS_SECRET_KEY}"
+
 get_server_cert
 
 for dbName in ${DB_NAMES}; do
@@ -74,7 +78,7 @@ for dbName in ${DB_NAMES}; do
 
     # Download backup file
     start=$(date +%s)
-    s3cmd get -f ${S3_BUCKET}/${dbName}.sql.gz /tmp/${dbName}.sql.gz
+    aws s3 cp --quiet "${S3_BUCKET}/${dbName}.sql.gz" "/tmp/${dbName}.sql.gz"
     STATUS=$?
     end=$(date +%s)
 
@@ -89,7 +93,7 @@ for dbName in ${DB_NAMES}; do
 
     # Download checksum file
     start=$(date +%s)
-    s3cmd get -f ${S3_BUCKET}/${dbName}.sql.sha256.gz /tmp/${dbName}.sql.sha256.gz
+    aws s3 cp --quiet "${S3_BUCKET}/${dbName}.sql.sha256.gz" "/tmp/${dbName}.sql.sha256.gz"
     STATUS=$?
     end=$(date +%s)
 
