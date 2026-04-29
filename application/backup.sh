@@ -89,7 +89,7 @@ error_to_sentry() {
 
 STATUS=0
 
-log "INFO" "mysql-backup-restore: backup: Started"
+log "INFO" "mysql-backup-restore ${GITHUB_REF_NAME:-?} (${GITHUB_SHA:-?}): backup: Started"
 
 # maintain backward compatibility with key variables accepted by s3cmd
 export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID:-$AWS_ACCESS_KEY}"

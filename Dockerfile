@@ -1,5 +1,10 @@
 FROM python:3-alpine
 
+ARG GITHUB_REF_NAME=unknown
+ARG GITHUB_SHA=unknown
+ENV GITHUB_REF_NAME=${GITHUB_REF_NAME}
+ENV GITHUB_SHA=${GITHUB_SHA}
+
 RUN <<EOF
   apk update
   apk add --no-cache \
