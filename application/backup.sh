@@ -214,7 +214,7 @@ for dbName in ${DB_NAMES}; do
         start=$(date +%s)
         AWS_ACCESS_KEY_ID="${B2_APPLICATION_KEY_ID}" \
         AWS_SECRET_ACCESS_KEY="${B2_APPLICATION_KEY}" \
-        aws s3 cp --quiet "/tmp/${dbName}.sql.gz" "${B2_BUCKET}/${dbName}.sql.gz" \
+        aws s3 cp --quiet "/tmp/${dbName}.sql.gz" "s3://${B2_BUCKET}/${dbName}.sql.gz" \
           --endpoint-url "https://${B2_HOST}"
         STATUS=$?
         end=$(date +%s)
