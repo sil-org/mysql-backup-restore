@@ -43,6 +43,9 @@ services:
             S3_BUCKET: s3://world
             DB_NAMES: world
             MODE: restore
+            AWS_ACCESS_KEY_ID: abc123
+            AWS_SECRET_ACCESS_KEY: abcd1234
+            AWS_ENDPOINT_URL: http://minio:9000
         depends_on:
             db:
                 condition: service_healthy
