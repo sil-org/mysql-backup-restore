@@ -4,7 +4,11 @@ STATUS=0
 
 case "${MODE}" in
     backup|restore)
-        /data/${MODE}.sh || STATUS=$?
+        if [ -z "${APP_ID}" ]; then
+            "/data/${MODE}.sh" || STATUS=$?
+        else
+            config-shim --app "${APP_ID}" --config "${CONFIG_ID}" --env "${ENV_ID}" "/data/${MODE}.sh" || STATUS=$?
+        fi
         ;;
     *)
         echo mysql-backup-restore: FATAL: Unknown MODE: ${MODE}

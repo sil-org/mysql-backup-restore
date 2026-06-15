@@ -18,6 +18,9 @@ RUN <<EOF
   pip3 install awscli
 EOF
 
+ADD https://github.com/sil-org/config-shim/releases/latest/download/config-shim.gz config-shim.gz
+RUN gzip -d config-shim.gz && chmod 755 config-shim && mv config-shim /usr/local/bin
+
 COPY application/ /data/
 WORKDIR /data
 
