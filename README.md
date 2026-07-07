@@ -52,19 +52,21 @@ This image is built automatically to GitHub Packages (GHCR)
 You'll need [Docker Engine](https://docs.docker.com/engine/) with the Docker Compose plugin and [Make](https://www.gnu.org/software/make/).
 
 1. cd .../mysql-backup-restore
+2. `cp local.env.dist local.env`
 3. Upload test/world.sql.gz to the S3 bucket.
-4. `make db`  # creates the MySQL DB server
-5. `make restore`  # restores the DB dump file
-6. `docker ps -a`  # get the Container ID of the exited restore container
-7. `docker logs <containerID>`  # review the restoration log messages
-8. `make backup`  # create a new DB dump file
-9. `docker ps -a`  # get the Container ID of the exited backup container
-10. `docker logs <containerID>`  # review the backup log messages
-11. `make restore`  # restore the DB dump file from the new backup
-12. `docker ps -a`  # get the Container ID of the exited restore container
-13. `docker logs <containerID>`  # review the restoration log messages
-14. `make clean`  # remove containers and network
-15. `docker volume ls`  # find the volume ID of the MySQL data container
-16. `docker volume rm <volumeID>`  # remove the data volume
-17. `docker images`  # list existing images
-18. `docker image rm <imageID ...>`  # remove images no longer needed
+4. `make db`  # starts the MariaDB server and Adminer
+5. Open http://localhost:8001 and log in to Adminer (System: MySQL, Server: `db`, Username: `root`, Password: `r00tp@ss!`)
+6. `make restore`  # restores the DB dump file
+7. `docker ps -a`  # get the Container ID of the exited restore container
+8. `docker logs <containerID>`  # review the restoration log messages
+9. `make backup`  # create a new DB dump file
+10. `docker ps -a`  # get the Container ID of the exited backup container
+11. `docker logs <containerID>`  # review the backup log messages
+12. `make restore`  # restore the DB dump file from the new backup
+13. `docker ps -a`  # get the Container ID of the exited restore container
+14. `docker logs <containerID>`  # review the restoration log messages
+15. `make clean`  # remove containers and network
+16. `docker volume ls`  # find the volume ID of the MySQL data container
+17. `docker volume rm <volumeID>`  # remove the data volume
+18. `docker images`  # list existing images
+19. `docker image rm <imageID ...>`  # remove images no longer needed
