@@ -17,14 +17,12 @@ services:
             timeout: 5s
             retries: 3
 
-    phpmyadmin:
-        image: phpmyadmin/phpmyadmin:latest
+    adminer:
+        image: adminer:latest
         ports:
-            - "8001:80"
+            - "8001:8080"
         environment:
-            PMA_HOST: db
-            PMA_USER: root
-            PMA_PASSWORD: r00tp@ss!
+            ADMINER_DEFAULT_SERVER: db
 
     app:
         build: ./
